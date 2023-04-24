@@ -35,9 +35,7 @@ export const postLoginHandler = async (
     responseHandler.ok(res, {
       accessToken,
       refreshToken,
-      user: {
-        findUser,
-      },
+      user: findUser,
     });
   } catch (err: any) {
     console.log(err);
@@ -96,18 +94,13 @@ export const refreshAccessTokenHandler = async (
     const findUser = await userRepository.findOneBy({ username });
 
     if (!findUser) {
-      return res.status(400).json({
-        status: "error",
-        message: "Invalid username or password1",
-      });
+      return responseHandler.badRequest(res, "Invalid username or password1");
     }
 
     const isValid = await verifyRefresh(username, refreshToken);
 
     if (!isValid) {
-      return res
-        .status(401)
-        .json({ success: false, error: "Invalid token,try login again" });
+      return responseHandler.unauthorized(res);
     }
 
     const { accessToken } = await refreshAccessToken(findUser);
