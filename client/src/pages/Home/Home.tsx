@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as S from "./styles";
 import SidebarItem from '../../components/SidebarItem/SidebarItem';
 import ExpandSidebarItem from '../../components/ExpandSidebarItem/ExpandSidebarItem';
@@ -12,32 +12,69 @@ import Filter from "../../images/filter.svg";
 import Logo from "../../images/Logo.png"
 import { Link } from 'react-router-dom';
 import FilterTag from '../../components/FilterTag/FilterTag';
+import { ITodo } from '../../model/ITodo';
+import todoAPI from '../../api/service/todo.api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentDisplayingList, setTodos } from '../../redux/todoSlice';
+import { RootState } from '../../redux/rootReducer';
+import TaskCard from '../../components/TaskCard/TaskCard';
+import AddTask from '../../components/AddTask/AddTask';
 const Home = () => {
 
+
+    const dispatch = useDispatch();
+    const { todosList, doneTodosList, notDoneTodosList, currentDisplayingList} = useSelector((state: RootState) => state.todo);
   const [allActive, setAllActive] = useState(true);
     const [doneActive, setDoneActive] = useState(false);
     const [notDoneActive, setNotDoneActive] = useState(false);
-    const [listToDisplay, setListToDisplay] = useState(0);
-    
+    //const [listToDisplay, setListToDisplay] = useState(0);
+    const listOfLists = [todosList, doneTodosList, notDoneTodosList];
 
     function handleAll(){
-      setListToDisplay(0);
+      //setListToDisplay(0);
+      dispatch(setCurrentDisplayingList(0))
       setAllActive(true);
       setDoneActive(false);
       setNotDoneActive(false);
   };
 
   function handleDone(){
-      setListToDisplay(1);
+    dispatch(setCurrentDisplayingList(1))
+      //setListToDisplay(1);
       setAllActive(false);
       setDoneActive(true);
       setNotDoneActive(false);
   };
   function handleNotDone(){
-      setListToDisplay(2);
+    dispatch(setCurrentDisplayingList(2))
+      //setListToDisplay(2);
       setAllActive(false);
       setDoneActive(false);
       setNotDoneActive(true);
+  };
+
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    try {
+      const {response, err} = await todoAPI.getAllTodos();
+      if(err) {
+        console.log(err);
+      }
+
+      if(response) {
+        dispatch(setTodos(response.data))
+        console.log(response);
+      }
+        
+    
+      //setTodos(newTempList);
+    } catch (err) {
+      console.log("error fetching todos " + err);
+    }
   };
   return(
         
@@ -65,6 +102,10 @@ const Home = () => {
                         <S.FilterIcon src={Filter}/>
                     </S.FilterField>
                 </S.TitleAndFilter>
+                <AddTask></AddTask>
+                {listOfLists[currentDisplayingList].map((todoItem)=> <TaskCard id={todoItem.id} title={todoItem.title} 
+                categoryName={todoItem.category?.title || "All"} categoryColor={todoItem.category?.color || "#FFFFFF"} 
+                isDone={todoItem.isDone} content={todoItem.content} categoryId={todoItem.categoryId} />)}
                 {/* {listOfLists[listToDisplay].map(task =><TaskCard id={task.id} name={task.title} list={task.categorie} color={task.color} done={task.done}/>)}
                 <AddTask></AddTask> */}
             </S.Main>

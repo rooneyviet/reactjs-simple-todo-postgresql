@@ -6,7 +6,7 @@ import { isAuthenticated } from "../middlewares/helper";
 
 const router = express.Router();
 
-router.post('/newCategory', isAuthenticated, validate(createCategorySchema), newCategoryHandler);
+router.post('/newcategory', isAuthenticated, validate(createCategorySchema), newCategoryHandler);
 
 router.get('/:categoryId', isAuthenticated, validate(getCategorySchema), getCategoryHandler);
 

@@ -9,7 +9,7 @@ export type ITodo= {
     content: string, 
     isDone: boolean,
     userId: string,
-    categoryId: string,
+    categoryId?: string,
     user: IUser,
-    category: ICategory
+    category?: ICategory
 }

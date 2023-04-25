@@ -15,7 +15,7 @@ const apiClient = axios.create({
 })
 
 apiClient.interceptors.request.use(async config => {
-    config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+    config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
     config.headers['Content-Type'] = "application/json";
         return config;
 })

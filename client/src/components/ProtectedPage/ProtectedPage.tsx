@@ -10,10 +10,10 @@ interface ProtectedPageProps {
 
 const ProtectedPage = ({children}: ProtectedPageProps) => {
     const { loggedUser} = useSelector((state: RootState) => state.user);
-    
+    const isUserLogged = localStorage.getItem("accessToken")  !== ""
 
   return (
-    loggedUser ? children : <Login/>
+    (loggedUser || isUserLogged) ? children : <Login/>
   )
 }
 
