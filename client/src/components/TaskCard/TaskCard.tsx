@@ -5,20 +5,16 @@ import Erase from "../../images/erase.svg";
 import { ITodo } from '../../model/ITodo';
 import todoAPI from '../../api/service/todo.api';
 import { useDispatch } from 'react-redux';
-import { removeTodo, updateTodoItem } from '../../redux/todoSlice';
+import { removeTodo, updateTodoItem } from '../../redux/features/todoSlice';
+import { setUpdateTodoInModal } from '../../redux/features/openModalSlice';
+
 
 interface TaskCardProps{
-    id:string;
-    title: string;
-    content: string,
-    categoryName: string;
-    categoryColor: string;
-    categoryId?: string,
-    isDone: boolean;
+    iTodo: ITodo
 };
 
 
-const TaskCard = ({id, title, content, isDone, categoryId, categoryName, categoryColor}: TaskCardProps) => {
+const TaskCard = ({iTodo}: TaskCardProps) => {
     const dispatch = useDispatch();
 
 
@@ -46,7 +42,7 @@ const TaskCard = ({id, title, content, isDone, categoryId, categoryName, categor
     const handleCheck = async (isDone: boolean) => {
         //const newIsDone = !isDone;
         try {
-          const {response, err} = await todoAPI.updateTodo({todoId: id, isDone: isDone});
+          const {response, err} = await todoAPI.updateTodo({todoId: iTodo.id, isDone: isDone});
           if(err) {
             
             console.log(err);
@@ -67,11 +63,11 @@ const TaskCard = ({id, title, content, isDone, categoryId, categoryName, categor
 
       const handleDelete = async () => {
         try {
-            const {response, err} = await todoAPI.deleteTodo({todoId: id});
+            const {response, err} = await todoAPI.deleteTodo({todoId: iTodo.id});
 
             if(response){
                 console.log(response);
-                dispatch(removeTodo(id))
+                dispatch(removeTodo(iTodo.id))
             }
 
             if(err){
@@ -83,20 +79,25 @@ const TaskCard = ({id, title, content, isDone, categoryId, categoryName, categor
     }
 
 
+    const handleEdit = () => {
+      dispatch(setUpdateTodoInModal(iTodo));
+    }
+
+
   return (
     <S.Container>
             <S.CheckField>
-                <S.CheckboxRing onClick={()=> handleCheck(!isDone)}><S.CheckFill done={isDone}/></S.CheckboxRing>
+                <S.CheckboxRing onClick={()=> handleCheck(!iTodo.isDone)}><S.CheckFill done={iTodo.isDone}/></S.CheckboxRing>
             </S.CheckField>
             <S.Description>
-                <S.Name done={isDone}>{title}</S.Name>
+                <S.Name done={iTodo.isDone}>{iTodo.title}</S.Name>
                 <S.ListBelong>
-                    <S.ColorTag color={categoryColor}/>
-                    <S.ListName>{categoryName}</S.ListName>
+                    <S.ColorTag color={iTodo.category?.color || "#FFFFFF"}/>
+                    <S.ListName>{iTodo.category?.title || "All"}</S.ListName>
                 </S.ListBelong>
             </S.Description>
             
-            <S.Icon src={Edit}/><S.Icon src={Erase} onClick={handleDelete}/>
+            <S.Icon src={Edit} onClick={handleEdit}/><S.Icon src={Erase} onClick={handleDelete}/>
         </S.Container>
   )
 }

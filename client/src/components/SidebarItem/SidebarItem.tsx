@@ -5,12 +5,13 @@ interface SidebarItemProps{
     name: string;
     icon: string;
     isActive: boolean;
+    handleClick?: () => void;
 }
 
-const SidebarItem = ({name, icon, isActive}: SidebarItemProps) => {
+const SidebarItem = ({name, icon, isActive, handleClick}: SidebarItemProps) => {
 
   return(
-    <Style.Container isActive={isActive}>
+    <Style.Container onClick={handleClick} isActive={isActive}>
         <Style.Icon src={icon}/>
         <Style.Name>{name}</Style.Name>
     </Style.Container>

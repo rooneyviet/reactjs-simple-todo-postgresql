@@ -1,8 +1,9 @@
-import { Todo } from './../../../server/src/entities/todo.entity';
+
 
 
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
-import {ITodo} from "../model/ITodo";
+import { ITodo } from "../../model/ITodo";
+
 
 
 export const todoSlice = createSlice({

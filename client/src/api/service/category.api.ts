@@ -25,7 +25,7 @@ interface NewCategoryProps{
     color: String;
 };
 
-const todoAPI = {
+const categoryAPI = {
     getAllCategories: async ()  => {
         try {
             const response = await apiClient.get<ICategory[]>(
@@ -81,7 +81,7 @@ const todoAPI = {
               }
         }
     },
-    newCategory: async ({title, color}: UpdateCategoryProps)  => {
+    newCategory: async ({title, color}: NewCategoryProps)  => {
         try {
             const response = await apiClient.post<ICategory>(
                 categoryEndpoint.newcategory,
@@ -102,4 +102,4 @@ const todoAPI = {
     },
 }
 
-export default todoAPI;
+export default categoryAPI;

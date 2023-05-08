@@ -25,6 +25,13 @@ interface UpdateTodoProps{
     categoryId?: string
 };
 
+interface NewTodoProps{
+    title?: string;
+    content?: String;
+    isDone?: boolean;
+    categoryId?: string
+};
+
 
 
 const todoAPI = {
@@ -68,6 +75,25 @@ const todoAPI = {
         try {
             const response = await apiClient.patch<ITodo>(
                 todoEndpoint.updateTodo(todoId),
+                {title, content, isDone, categoryId}
+            );
+            //console.log(response.data);
+            return {response};
+        } catch (err) {
+            console.log(err);
+            if (axios.isAxiosError(err) && err.response)  {
+                console.log(err);
+                console.log(err.response);
+                return {err:String(err?.response)};
+              } else {
+                return {err:"Something wrong?"};
+              }
+        }
+    },
+    newTodo: async ({title, content, isDone, categoryId}: NewTodoProps)  => {
+        try {
+            const response = await apiClient.post<ITodo>(
+                todoEndpoint.newTodo,
                 {title, content, isDone, categoryId}
             );
             //console.log(response.data);

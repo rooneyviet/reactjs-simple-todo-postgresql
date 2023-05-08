@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
 import * as S from "./styles";
 import Add from "../../images/add.svg";
+import { useDispatch } from "react-redux";
+import { showAddTodoModal } from "../../redux/features/openModalSlice";
 
 const AddTask = () => {
+    const dispatch = useDispatch();
     function handleClick(){
-        //setShowAdd(true);
+        dispatch(showAddTodoModal(true));
     };
 
     return(

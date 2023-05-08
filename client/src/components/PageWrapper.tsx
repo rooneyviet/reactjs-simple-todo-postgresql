@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
-import { setAppState } from '../redux/stateSlice';
+import { setAppState } from '../redux/features/stateSlice';
 
 interface PageWrapperProps {
   states: string;

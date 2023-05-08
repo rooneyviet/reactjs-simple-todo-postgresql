@@ -1,8 +1,7 @@
-import { Todo } from './../../../server/src/entities/todo.entity';
-
+import { IUser } from '../../model/IUser';
 
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
-import {IUser} from '../model/IUser';
+
 
 
 //const initialState = null as AuthState; 
@@ -18,9 +17,10 @@ export const userSlice = createSlice({
             state.loggedUser = action.payload;
             state.isUserLoggedIn = true;
         },
-        setLogout: (state, action: PayloadAction<IUser|null>)=> {
+        setLogout: (state, action: PayloadAction)=> {
             state.loggedUser = null;
             state.isUserLoggedIn = false;
+            localStorage.setItem("accessToken", "");
         },
         setAccessToken: (state, action: PayloadAction<string>)=> {
             state.token = action.payload;

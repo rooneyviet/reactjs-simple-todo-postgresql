@@ -4,7 +4,7 @@ import Logo from "../../images/Logo.png";
 import { Link } from "react-router-dom";
 import userApi from "../../api/service/user.api";
 import { useDispatch } from "react-redux";
-import { setAccessToken, setLogin } from "../../redux/userSlice";
+import { setAccessToken, setLogin } from "../../redux/features/userSlice";
 
 
 const Login = () =>{
@@ -33,11 +33,9 @@ const Login = () =>{
             console.log(err);
             setErrMessage("Invalid username or password. Please try again");
         }
-
     }
 
     
-
     function handleUsername(event: React.ChangeEvent<HTMLInputElement>){
         setUsername(event.target.value)
     }

@@ -1,36 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as S from "./styles";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
-import { showAddTodoModal } from "../../redux/features/openModalSlice";
+import { setUpdateTodoInModal, showAddTodoModal } from "../../redux/features/openModalSlice";
 import todoAPI from "../../api/service/todo.api";
 import { createNewTodo } from "../../redux/features/todoSlice";
+import { ITodo } from "../../model/ITodo";
+import { Modal } from "@mui/material";
 
 type CategorySelectOptionType = { label: string; id: string };
 
-const AddModal = () => {
+interface UpdateTodoModalProps {
+  iTodo: ITodo;
+}
+
+const UpdateTodoModal = () => {
   const dispatch = useDispatch();
   const { categoriesList } = useSelector((state: RootState) => state.category);
+  const { updatingTodo } = useSelector((state: RootState) => state.openModal);
   const [todoName, setTodoName] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  //const [taskCat, setTaskCat] = useState(categList.findIndex((cat)=>cat.name == "None"));
+  const [selectedCategoryPos, setSelectedCategoryPos] = useState(0);
 
+  
   function handleTyping(event: React.ChangeEvent<HTMLInputElement>) {
     setTodoName(event.target.value);
   }
 
   function handleCancel() {
-    dispatch(showAddTodoModal(false));
+    dispatch(setUpdateTodoInModal(null))
   }
 
-
-  const handleAdd = async () => {
+  const handleUpdate = async () => {
     try {
-      const { response, err } = await todoAPI.newTodo({
+      const { response, err } = await todoAPI.updateTodo({
+        todoId: updatingTodo?.id || "",
         title: todoName,
         content: "DUMMY",
-        isDone: false,
+        isDone: updatingTodo?.isDone || false,
         categoryId: categoryId,
       });
       if (err) {
@@ -46,14 +54,24 @@ const AddModal = () => {
     }
   };
 
-  function handleChange() {
-    //setTaskCat(Number(e.options[(e.selectedIndex)].value));
-  }
-
   const selectCategoriesOptions: Array<CategorySelectOptionType> =
     categoriesList.map((eachCategory) => {
       return { label: eachCategory.title, id: eachCategory.id };
     });
+
+  const categoryIdListOption: Array<string> = categoriesList.map(
+    (eachOption) => {
+      return eachOption.id || "";
+    }
+  );
+
+  var selctedInd = categoryIdListOption.indexOf(categoryId);
+  useEffect(()=>{
+		setTodoName(updatingTodo?.title || "");
+    setCategoryId(updatingTodo?.categoryId || "");
+    setSelectedCategoryPos(selctedInd);
+	}, [])
+  
 
   const handleSelectionChange = (option: CategorySelectOptionType | null) => {
     if (option) {
@@ -62,23 +80,23 @@ const AddModal = () => {
   };
 
   return (
-    <S.Background>
+    <Modal open={updatingTodo!== null} onClose={()=> dispatch(setUpdateTodoInModal(null))}
+    style={{display:'flex',alignItems:'center',justifyContent:'center'}}
+      >
       <S.Container>
-        <S.Text>Todo Name</S.Text>
+        <S.Text>Insert name</S.Text>
         <S.TitleInput
-          placeholder="Enter a todo name"
+          placeholder="Task name"
           onChange={handleTyping}
           value={todoName}
         />
         <S.Text>Select a categorie</S.Text>
-        {/* <S.Select id="select" onChange={handleChange}>
-                    {categList.map((cat)=><option value={cat.id}>{cat.name}</option>)}
-                </S.Select> */}
+        
         <div style={{ width: "32vw" }}>
           <Select
             className="basic-single"
             classNamePrefix="select"
-            defaultValue={selectCategoriesOptions[1]}
+            defaultValue={selectCategoriesOptions[selectedCategoryPos]}
             isDisabled={false}
             isClearable={false}
             isSearchable={false}
@@ -90,11 +108,11 @@ const AddModal = () => {
 
         <S.Buttons>
           <S.CancelButton onClick={handleCancel}>Cancel</S.CancelButton>
-          <S.DeletButton onClick={handleAdd}>Add</S.DeletButton>
+          <S.DeletButton onClick={handleUpdate}>Update</S.DeletButton>
         </S.Buttons>
       </S.Container>
-    </S.Background>
+    </Modal>
   );
 };
 
-export default AddModal;
+export default UpdateTodoModal;

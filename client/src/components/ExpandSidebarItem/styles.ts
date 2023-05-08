@@ -98,14 +98,19 @@ export const AddArea = styled.div`
     display: flex;
     align-items: center;
     background: #f5f5f5;
+    &:hover{
+        cursor:pointer;
+        background: #fafafa;
+    }
 `
 
 
 export const AddText = styled.p`
     font-size: 16px;
-    color: #ccc;
+    color: #555;
     margin-left:8px;
     font-weight:400; 
+    font-weight: 500;
 `
 
 export const AddIcon = styled.img`

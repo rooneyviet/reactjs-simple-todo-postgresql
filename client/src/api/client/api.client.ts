@@ -1,5 +1,8 @@
 import axios from "axios"
 import queryString from "query-string"
+import { setLogout } from "../../redux/features/userSlice";
+import { useDispatch } from "react-redux";
+import store from "../../redux/store";
 
 const protocol = process.env.NODE_ENV === "production" ? "https://" : "http://";
 const domain = process.env.NODE_ENV === "production" ? "example.com" : "localhost:5000";
@@ -23,9 +26,17 @@ apiClient.interceptors.request.use(async config => {
 apiClient.interceptors.response.use((response) => {
     return response;
 
-}, (err) => {
-    console.log(err);
-    throw err.response.data;
+}, (error) => {
+    console.log(error);
+    if (
+        error.response?.status === 401 //&& error.response?.data?.message === "TokenExpiredError"
+      ) {
+        store.dispatch(setLogout());
+      }
+
+      // Any status codes that falls outside the range of 2xx cause this function to trigger
+      // Do something with response error
+      return Promise.reject(error);
 });
 
 export default apiClient;
